@@ -38,7 +38,7 @@ class CategoryController extends Controller
             return response()->json([
                 'error' => true,
                 'message' => 'Category not found.',
-            ]);
+            ], 404);
         }
 
         return response()->json([
@@ -58,15 +58,19 @@ class CategoryController extends Controller
         $message = 'Category created successfully.';
         try {
             Category::create($request->all());
+            return response()->json([
+                'error' => false,
+                'message' => 'Category created successfully.',
+            ]);
         } catch (\Exception $e) {
             $error = true;
             $message = $e->getMessage();
+            return response()->json([
+                'error' => $error,
+                'message' => $message,
+            ]);
         }
 
-        return response()->json([
-            'error' => $error,
-            'message' => $message,
-        ]);
     }
 
     public function update(Request $request, $id)
@@ -82,7 +86,7 @@ class CategoryController extends Controller
             return response()->json([
                 'error' => true,
                 'message' => 'Category not found.',
-            ]);
+            ], 404);
         }
 
         $error = false;
@@ -108,7 +112,7 @@ class CategoryController extends Controller
             return response()->json([
                 'error' => true,
                 'message' => 'Category not found.',
-            ]);
+            ],404);
         }
 
         return response()->json([
