@@ -13,6 +13,11 @@ class CategoryController extends Controller
         return view('categories.index', compact('categories'));
     }
 
+    public function show(Category $category)
+    {
+        return view('categories.show', compact('category'));
+    }
+
     public function create()
     {
         return view('categories.create');
@@ -31,6 +36,29 @@ class CategoryController extends Controller
             Category::create($request->all());
             return redirect()->route('categories.index')
             ->with('success', 'Category created successfully.');
+        } catch (\Exception $e) {
+            $message = $e->getMessage();
+        }
+    }
+
+    public function edit(Category $category)
+    {
+        return view('categories.edit', compact('category'));
+    }
+
+    public function update(Request $request, Category $category)
+    {
+        $request->validate([
+            'name' => 'required',
+            'is_published' => 'required',
+        ]);
+
+        $error = false;
+        $message = 'Category updated successfully.';
+        try {
+            $category->update($request->all());
+            return redirect()->route('categories.index')
+            ->with('success', 'Category updated successfully');
         } catch (\Exception $e) {
             $message = $e->getMessage();
         }

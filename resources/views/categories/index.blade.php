@@ -16,6 +16,8 @@
               <td>{{ $category->is_published ? "yes" : "no" }}</td>
               <td>{{ $category->created_at }}</td>
               <td>
+                <a href="{{ route('categories.show', $category->id) }}">Show</a>
+                <a href="{{ route('categories.edit', $category->id) }}">Edit</a>
                 <form action="{{ route('categories.destroy', $category->id) }}" method="POST">
                   @csrf
                   @method('DELETE')
