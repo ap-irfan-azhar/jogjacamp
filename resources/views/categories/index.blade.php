@@ -4,7 +4,12 @@
         <title>Categories</title>
     </head>
     <body>
-        <h1>Categories</h1>
+        <div>
+          <h1>Categories</h1>
+          <button style="margin-bottom: 10px">
+            <a style="text-decoration: none" href="{{ route('categories.create') }}">Create</a>
+          </button>
+        </div>
         <table>
           <th>Name</th>
           <th>Is Published</th>

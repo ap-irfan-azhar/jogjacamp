@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use \App\Models\Category;
+use \App\Notifications\CategoryChanged;
+use \App\Models\User;
 
 class CategoryController extends Controller
 {
@@ -57,7 +59,12 @@ class CategoryController extends Controller
         $error = false;
         $message = 'Category created successfully.';
         try {
-            Category::create($request->all());
+            $category = Category::create($request->all());
+            $users = User::all();
+            $changedBy = auth()->user();
+            foreach ($users as $user) {
+                $user->notify(new CategoryChanged($user, $changedBy, $category, 'created'));
+            }
             return response()->json([
                 'error' => false,
                 'message' => 'Category created successfully.',
@@ -92,7 +99,13 @@ class CategoryController extends Controller
         $error = false;
         $message = 'Category updated successfully.';
         try {
+            $cat = $category;
             $category->update($request->all());
+            $users = User::all();
+            $changedBy = auth()->user();
+            foreach ($users as $user) {
+                $user->notify(new CategoryChanged($user, $changedBy, $cat, 'updated'));
+            }
         } catch (\Exception $e) {
             $error = true;
             $message = $e->getMessage();
@@ -113,6 +126,13 @@ class CategoryController extends Controller
                 'error' => true,
                 'message' => 'Category not found.',
             ],404);
+        }
+        $cat = $category;
+        $category->delete();
+        $users = User::all();
+        $changedBy = auth()->user();
+        foreach ($users as $user) {
+            $user->notify(new CategoryChanged($user, $changedBy, $cat, 'deleted'));
         }
 
         return response()->json([
